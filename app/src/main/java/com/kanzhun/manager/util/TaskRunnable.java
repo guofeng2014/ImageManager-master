@@ -39,6 +39,19 @@ public class TaskRunnable implements Runnable {
         this.config = config;
     }
 
+    public String getUrl() {
+
+        return imageInfo.path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof TaskRunnable && ((TaskRunnable) o).getUrl().equals(getUrl())) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void run() {
         // 获得图片需要显示的大小

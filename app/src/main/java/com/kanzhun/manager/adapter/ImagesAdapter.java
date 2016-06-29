@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.kanzhun.manager.R;
-import com.kanzhun.manager.util.ImageLoader2;
+import com.kanzhun.manager.util.ImageLoader;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class ImagesAdapter extends BaseAdapter {
         }
         String path = getItem(position);
         if (!TextUtils.isEmpty(path)) {
-            ImageLoader2.get().loadImage(path, holder.ivImage);
+            ImageLoader.get().loadImage(path, holder.ivImage);
         }
         return convertView;
     }

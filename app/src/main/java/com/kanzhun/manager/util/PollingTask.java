@@ -1,6 +1,8 @@
 package com.kanzhun.manager.util;
 
 
+import android.util.Log;
+
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
@@ -72,6 +74,7 @@ public class PollingTask extends Thread {
      * 保持消息队列长度在一屏幕范围
      */
     private void checkLimitQueue() {
+        Log.d("TAG", "checkLimitQueue: " + parserQueue.size());
         while (parserQueue.size() > gridCount) {
             parserQueue.removeFirst();
         }

@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.kanzhun.manager.adapter.ImagesAdapter;
 import com.kanzhun.manager.bean.FolderBean;
 import com.kanzhun.manager.dialog.GallerySelectDialog;
-import com.kanzhun.manager.util.ImageLoader2;
+import com.kanzhun.manager.util.ImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -187,7 +187,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ImageLoader2.get().release();
+        ImageLoader.get().release();
     }
 
 

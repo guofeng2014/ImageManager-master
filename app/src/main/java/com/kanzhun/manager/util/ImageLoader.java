@@ -13,12 +13,12 @@ import com.kanzhun.manager.itfs.OnImageLoadCompleteListener;
 /**
  * Created by zhouyou on 2016/6/24.
  */
-public class ImageLoader2 implements OnImageLoadCompleteListener {
+public class ImageLoader implements OnImageLoadCompleteListener {
 
     /**
      * 当前实利
      */
-    private static ImageLoader2 instance;
+    private static ImageLoader instance;
     /**
      * 配置信息
      */
@@ -29,11 +29,11 @@ public class ImageLoader2 implements OnImageLoadCompleteListener {
     private PollingTask task;
 
 
-    public static ImageLoader2 get() {
+    public static ImageLoader get() {
         if (instance == null) {
-            synchronized (ImageLoader2.class) {
+            synchronized (ImageLoader.class) {
                 if (instance == null) {
-                    instance = new ImageLoader2();
+                    instance = new ImageLoader();
                 }
             }
         }
@@ -64,6 +64,9 @@ public class ImageLoader2 implements OnImageLoadCompleteListener {
         //添加Task任务到解析队列里
         TaskRunnable r = new TaskRunnable(imageInfo, config, config.getImageConfig());
         r.setOnImageLoadCompleteListener(this);
+        if(config.getParserQueue().contains(r)){
+            config.getParserQueue().remove(r);
+        }
         config.getParserQueue().add(r);
     }
 

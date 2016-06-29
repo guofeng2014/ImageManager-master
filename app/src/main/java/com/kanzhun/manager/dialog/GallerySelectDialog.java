@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.kanzhun.manager.R;
 import com.kanzhun.manager.bean.FolderBean;
-import com.kanzhun.manager.util.ImageLoader2;
+import com.kanzhun.manager.util.ImageLoader;
 import com.tandong.bottomview.view.BottomView;
 
 import java.util.List;
@@ -117,7 +117,7 @@ public class GallerySelectDialog implements AdapterView.OnItemClickListener {
             if (item != null) {
                 holder.tvDirName.setText(item.folderName);
                 holder.tvDirCount.setText(item.files.size() + "");
-                ImageLoader2.get().loadImage(item.firstImagePath, holder.ivDir);
+                ImageLoader.get().loadImage(item.firstImagePath, holder.ivDir);
             }
             return convertView;
         }

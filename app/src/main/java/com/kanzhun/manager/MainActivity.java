@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
-import com.kanzhun.manager.util.ImageLoader2;
+import com.kanzhun.manager.util.ImageLoader;
 import com.kanzhun.manager.util.Type;
 
 /**
@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
                 .setQueueType(Type.FIFO)
                 .setImageConfig(Bitmap.Config.RGB_565)
                 .build();
-        ImageLoader2.get().init(config);
+        ImageLoader.get().init(config);
 
         findViewById(R.id.text_view).setOnClickListener(new View.OnClickListener() {
             @Override
