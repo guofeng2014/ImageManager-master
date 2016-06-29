@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
                 .setDefaultResourceId(R.mipmap.ic_launcher)
                 .setErrorResourceId(R.mipmap.ic_launcher)
                 .setThreadCount(3)
-                .setQueueType(Type.FIFO)
+                .setQueueType(Type.LIFO)
                 .setImageConfig(Bitmap.Config.RGB_565)
                 .build();
         ImageLoader.get().init(config);

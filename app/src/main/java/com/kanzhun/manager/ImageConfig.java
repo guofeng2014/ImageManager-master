@@ -212,7 +212,7 @@ public final class ImageConfig {
             int height = metrics.heightPixels;
             int gridSize = width / 3;
             int lines = height / gridSize;
-            return lines * 3;
+            return lines * 3+6;
         }
 
         public ImageConfig build() {

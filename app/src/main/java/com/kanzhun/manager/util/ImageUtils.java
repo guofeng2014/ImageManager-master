@@ -30,6 +30,7 @@ public class ImageUtils {
         return BitmapFactory.decodeFile(path, options);
     }
 
+
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int width = options.outWidth;
         int height = options.outHeight;
