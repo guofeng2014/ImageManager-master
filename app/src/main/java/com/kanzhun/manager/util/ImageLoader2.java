@@ -62,7 +62,7 @@ public class ImageLoader2 implements OnImageLoadCompleteListener {
         //监测轮播线程
         checkRollThread();
         //添加Task任务到解析队列里
-        TaskRunnable r = new TaskRunnable(imageInfo, config);
+        TaskRunnable r = new TaskRunnable(imageInfo, config, config.getImageConfig());
         r.setOnImageLoadCompleteListener(this);
         config.getParserQueue().add(r);
     }

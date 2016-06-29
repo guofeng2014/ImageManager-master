@@ -24,13 +24,19 @@ public class TaskRunnable implements Runnable {
      */
     private OnImageLoadCompleteListener listener;
 
+    /**
+     * 图片质量
+     */
+    private Bitmap.Config config;
+
     public void setOnImageLoadCompleteListener(OnImageLoadCompleteListener listener) {
         this.listener = listener;
     }
 
-    public TaskRunnable(ImageInfo imageInfo, ImageConfig imageConfig) {
+    public TaskRunnable(ImageInfo imageInfo, ImageConfig imageConfig, Bitmap.Config config) {
         this.imageInfo = imageInfo;
         this.imageConfig = imageConfig;
+        this.config = config;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class TaskRunnable implements Runnable {
         // 获得图片需要显示的大小
         ImageSizeInfo imageSizeInfo = ImageUtils.getImageViewSize(imageInfo.imageView);
         //加载本地bitmap
-        Bitmap b = ImageUtils.decodeSampledBitmapFromPath(imageInfo.path, imageSizeInfo.width, imageSizeInfo.height);
+        Bitmap b = ImageUtils.decodeSampledBitmapFromPath(config, imageInfo.path, imageSizeInfo.width, imageSizeInfo.height);
         //设置打包数据bitmap
         imageInfo.bitmap = b;
         //释放信号量

@@ -2,6 +2,7 @@ package com.kanzhun.manager;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,7 +11,7 @@ import com.kanzhun.manager.util.Type;
 
 /**
  * 010-62649180
- *
+ * <p/>
  * 606103462093
  */
 public class MainActivity extends Activity {
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
                 .setErrorResourceId(R.mipmap.ic_launcher)
                 .setThreadCount(3)
                 .setQueueType(Type.FIFO)
+                .setImageConfig(Bitmap.Config.RGB_565)
                 .build();
         ImageLoader2.get().init(config);
 

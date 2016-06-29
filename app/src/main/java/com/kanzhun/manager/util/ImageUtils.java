@@ -15,13 +15,16 @@ import java.lang.reflect.Field;
  */
 public class ImageUtils {
 
-    public static Bitmap decodeSampledBitmapFromPath(String path, int width, int height) {
-        // 获取图片的宽高但是不把图片加载到内存中
+    public static Bitmap decodeSampledBitmapFromPath(Bitmap.Config config, String path, int width, int height) {
         BitmapFactory.Options options = new BitmapFactory.Options();
+        // 获取图片的宽高但是不把图片加载到内存中
         options.inJustDecodeBounds = true;
+        //加载图片信息
         BitmapFactory.decodeFile(path, options);
+        //计算缩放比
         options.inSampleSize = calculateInSampleSize(options, width, height);
-
+        //图片质量
+        options.inPreferredConfig = config;
         // 使用获得到的InSampleSize再次解析图片
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(path, options);

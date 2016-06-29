@@ -2,6 +2,7 @@ package com.kanzhun.manager;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 
 import com.kanzhun.manager.itfs.MemoryCache;
@@ -58,6 +59,10 @@ public final class ImageConfig {
      * 一屏幕显示的grid的数量
      */
     private int gridCount;
+    /**
+     * 图片的压缩质量参数
+     */
+    private Bitmap.Config imageConfig = null;
 
     public ImageConfig(Builder builder) {
         this.defaultResourceId = builder.getDefaultResourceId();
@@ -68,6 +73,7 @@ public final class ImageConfig {
         this.threadPool = Executors.newFixedThreadPool(getThreadCount());
         this.semaphore = new Semaphore(getThreadCount());
         this.gridCount = builder.getGridCount();
+        this.imageConfig = builder.getImageConfig() == null ? Bitmap.Config.ARGB_8888 : builder.getImageConfig();
     }
 
     public Type getQueueType() {
@@ -106,7 +112,15 @@ public final class ImageConfig {
         return gridCount;
     }
 
+    public Bitmap.Config getImageConfig() {
+        return imageConfig;
+    }
+
     public static class Builder {
+        /**
+         * 当前上下文
+         */
+        private Context context;
         /**
          * 图片加载默认显示的图片
          */
@@ -128,9 +142,9 @@ public final class ImageConfig {
          */
         private Type queueType;
         /**
-         * 当前上下文
+         * 图片的压缩质量参数
          */
-        private Context context;
+        private Bitmap.Config imageConfig;
 
         public Builder(Context context) {
             this.context = context;
@@ -158,6 +172,15 @@ public final class ImageConfig {
 
         public Builder setQueueType(Type queueType) {
             this.queueType = queueType;
+            return this;
+        }
+
+        public Bitmap.Config getImageConfig() {
+            return imageConfig;
+        }
+
+        public Builder setImageConfig(Bitmap.Config imageConfig) {
+            this.imageConfig = imageConfig;
             return this;
         }
 
