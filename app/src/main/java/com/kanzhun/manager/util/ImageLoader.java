@@ -55,7 +55,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         imageInfo.imageView = imageView;
         imageInfo.bitmap = b;
         //直接加载缓存bitmap
-        if (b != null) {
+        if (b != null && !b.isRecycled()) {
             onImageRefresh(imageInfo);
             return;
         }
@@ -64,7 +64,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         //添加Task任务到解析队列里
         TaskRunnable r = new TaskRunnable(imageInfo, config, config.getImageConfig());
         r.setOnImageLoadCompleteListener(this);
-        if(config.getParserQueue().contains(r)){
+        if (config.getParserQueue().contains(r)) {
             config.getParserQueue().remove(r);
         }
         config.getParserQueue().add(r);
