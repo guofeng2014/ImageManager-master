@@ -10,11 +10,17 @@ import com.kanzhun.manager.ImageConfig;
 import com.kanzhun.manager.bean.ImageInfo;
 import com.kanzhun.manager.itfs.OnImageLoadCompleteListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by zhouyou on 2016/6/24.
  */
 public class ImageLoader implements OnImageLoadCompleteListener {
-
+    /**
+     * 用于存储ImageView和地址的对应关系
+     */
+    private final Map<ImageView, String> tagMap = new HashMap<>();
     /**
      * 当前实利
      */
@@ -59,7 +65,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         //地址为空,加载默认图片
         if (TextUtils.isEmpty(path)) return;
         // 设置tag
-        imageView.setTag(path);
+        tagMap.put(imageView, path);
         //从缓存获取bitmap对象
         Bitmap b = config.getmLruCache().get(path);
         //打包数据
@@ -70,7 +76,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
             return;
         }
         //创建任务
-        TaskRunnable imageRunnable = new TaskRunnable(imageInfo, config, config.getImageConfig());
+        TaskRunnable imageRunnable = new TaskRunnable(imageInfo, config, tagMap, config.getImageConfig());
         imageRunnable.setOnImageLoadCompleteListener(this);
         //添加任务到线程池
         config.getThreadPool().execute(imageRunnable);
@@ -85,7 +91,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
             ImageInfo imageInfo = (ImageInfo) msg.obj;
             Bitmap b = imageInfo.bitmap;
             ImageView iv = imageInfo.imageView;
-            String tag = (String) iv.getTag();
+            String tag = tagMap.get(iv);
             String path = imageInfo.path;
             if (TextUtils.equals(tag, path)) {
                 //文件加载失败

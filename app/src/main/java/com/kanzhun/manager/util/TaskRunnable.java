@@ -1,11 +1,14 @@
 package com.kanzhun.manager.util;
 
 import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 import com.kanzhun.manager.ImageConfig;
 import com.kanzhun.manager.bean.ImageInfo;
 import com.kanzhun.manager.bean.ImageSizeInfo;
 import com.kanzhun.manager.itfs.OnImageLoadCompleteListener;
+
+import java.util.Map;
 
 /**
  * 作者：guofeng
@@ -25,6 +28,10 @@ public class TaskRunnable implements Runnable {
      */
     private OnImageLoadCompleteListener listener;
     /**
+     * 存储ImageView和地址的对应关系
+     */
+    private Map<ImageView, String> tagMap;
+    /**
      * 图片质量
      */
     private Bitmap.Config config;
@@ -33,9 +40,10 @@ public class TaskRunnable implements Runnable {
         this.listener = listener;
     }
 
-    public TaskRunnable(ImageInfo imageInfo, ImageConfig imageConfig, Bitmap.Config config) {
+    public TaskRunnable(ImageInfo imageInfo, ImageConfig imageConfig, Map<ImageView, String> tagMap, Bitmap.Config config) {
         this.imageInfo = imageInfo;
         this.imageConfig = imageConfig;
+        this.tagMap = tagMap;
         this.config = config;
     }
 
@@ -46,7 +54,7 @@ public class TaskRunnable implements Runnable {
         if (imageConfig == null) return;
         if (config == null) return;
         //判断图片是否可加载
-        String tag = (String) imageInfo.imageView.getTag();
+        String tag = tagMap.get(imageInfo.imageView);
         String path = imageInfo.path;
         if (!tag.equals(path)) return;
         // 获得图片需要显示的大小
