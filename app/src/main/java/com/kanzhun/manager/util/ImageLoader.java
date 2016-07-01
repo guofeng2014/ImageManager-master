@@ -23,10 +23,6 @@ public class ImageLoader implements OnImageLoadCompleteListener {
      * 配置信息
      */
     private ImageConfig config;
-    /**
-     * 轮训线程
-     */
-    private PollingTask task;
 
 
     public static ImageLoader get() {
@@ -40,44 +36,58 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         return instance;
     }
 
+    /**
+     * 初始化配置信息
+     *
+     * @param config
+     */
+    public void init(ImageConfig config) {
+        this.config = config;
+    }
 
-    public void loadImage(String path, ImageView imageView) {
+    /**
+     * 加载图片
+     *
+     * @param path      图片路径
+     * @param imageView 图片控件
+     */
+    public void displayImage(String path, ImageView imageView) {
         if (config == null) throw new NullPointerException("请初始化ImageConfig");
+        if (imageView == null) throw new NullPointerException("imageView不可为空");
         //加载默认图片
         imageView.setImageResource(config.getDefaultResourceId());
-        //设置TAG
+        //地址为空,加载默认图片
+        if (TextUtils.isEmpty(path)) return;
+        // 设置tag
         imageView.setTag(path);
         //从缓存获取bitmap对象
         Bitmap b = config.getmLruCache().get(path);
         //打包数据
-        ImageInfo imageInfo = new ImageInfo();
-        imageInfo.path = path;
-        imageInfo.imageView = imageView;
-        imageInfo.bitmap = b;
-        //直接加载缓存bitmap
+        ImageInfo imageInfo = new ImageInfo(b, imageView, path);
+        //加载缓存bitmap
         if (b != null && !b.isRecycled()) {
             onImageRefresh(imageInfo);
             return;
         }
-        //监测轮播线程
-        checkRollThread();
-        //添加Task任务到解析队列里
-        TaskRunnable r = new TaskRunnable(imageInfo, config, config.getImageConfig());
-        r.setOnImageLoadCompleteListener(this);
-        if (config.getParserQueue().contains(r)) {
-            config.getParserQueue().remove(r);
-        }
-        config.getParserQueue().add(r);
+        //创建任务
+        TaskRunnable imageRunnable = new TaskRunnable(imageInfo, config, config.getImageConfig());
+        imageRunnable.setOnImageLoadCompleteListener(this);
+        //添加任务到线程池
+        config.getThreadPool().execute(imageRunnable);
     }
 
+    /**
+     * 刷新主UI
+     */
     private Handler mUIHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             ImageInfo imageInfo = (ImageInfo) msg.obj;
             Bitmap b = imageInfo.bitmap;
             ImageView iv = imageInfo.imageView;
+            String tag = (String) iv.getTag();
             String path = imageInfo.path;
-            if (TextUtils.equals(iv.getTag().toString(), path)) {
+            if (TextUtils.equals(tag, path)) {
                 //文件加载失败
                 if (b == null) {
                     iv.setImageResource(config.getErrorResourceId());
@@ -91,12 +101,11 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         }
     });
 
-    public void release() {
-        task.quit();
-        config.getmLruCache().clear();
-        System.gc();
-    }
-
+    /**
+     * 发送ImageInfo数据到Handler，刷新UI统一入口
+     *
+     * @param imageInfo
+     */
     @Override
     public void onImageRefresh(ImageInfo imageInfo) {
         Message message = Message.obtain();
@@ -104,17 +113,12 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         mUIHandler.sendMessage(message);
     }
 
-    public void init(ImageConfig config) {
-        this.config = config;
+    /**
+     * 释放内存
+     */
+    public void release() {
+        config.getmLruCache().clear();
+        System.gc();
     }
 
-    /**
-     * 坚持轮播线程是否活着
-     */
-    private void checkRollThread() {
-        if (task == null || !task.isAlive()) {
-            task = new PollingTask(config.getParserQueue(), config.getQueueType(), config.getThreadPool(), config.getSemaphore(), config.getGridCount());
-            task.start();
-        }
-    }
 }

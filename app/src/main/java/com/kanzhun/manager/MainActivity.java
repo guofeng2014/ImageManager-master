@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.kanzhun.manager.util.ImageLoader;
-import com.kanzhun.manager.util.Type;
 
 /**
  * 010-62649180
@@ -21,11 +20,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageConfig config = new ImageConfig.Builder(this)
+        ImageConfig config = new ImageConfig.Builder()
                 .setDefaultResourceId(R.mipmap.ic_launcher)
                 .setErrorResourceId(R.mipmap.ic_launcher)
                 .setThreadCount(3)
-                .setQueueType(Type.LIFO)
                 .setImageConfig(Bitmap.Config.RGB_565)
                 .build();
         ImageLoader.get().init(config);

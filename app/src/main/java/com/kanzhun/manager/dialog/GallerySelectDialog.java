@@ -117,7 +117,7 @@ public class GallerySelectDialog implements AdapterView.OnItemClickListener {
             if (item != null) {
                 holder.tvDirName.setText(item.folderName);
                 holder.tvDirCount.setText(item.files.size() + "");
-                ImageLoader.get().loadImage(item.firstImagePath, holder.ivDir);
+                ImageLoader.get().displayImage(item.coverImagePath, holder.ivDir);
             }
             return convertView;
         }

@@ -8,23 +8,17 @@ import java.util.List;
  */
 public class FolderBean {
 
-    public long id;
-
-    public String firstImagePath;
-
+    /**
+     * 列表封面图片地址
+     */
+    public String coverImagePath;
+    /**
+     * 文件夹名称
+     */
     public String folderName;
-
+    /**
+     * 列表集合
+     */
     public List<String> files = new ArrayList<>();
 
-    public void setDir(String dir) {
-        int lastIndexOf = dir.lastIndexOf("/");
-        this.folderName = dir.substring(lastIndexOf);
-    }
-
-    public void setId(long id) {
-        this.id = id;
-        if (id < 0) {
-            this.folderName = "所有图片";
-        }
-    }
 }

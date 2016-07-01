@@ -35,12 +35,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
     private GridView gv;
     private TextView tvDirName;
     private TextView tvDirCount;
-
-
     private List<FolderBean> folderList = new ArrayList<>();
-
     private ProgressDialog pd;
-
     private ImagesAdapter adapter;
     /**
      * 加载相册数据为空
@@ -74,9 +70,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
             Toast.makeText(getApplicationContext(), "当前存储卡不可用", Toast.LENGTH_SHORT).show();
             return;
         }
-
         pd = ProgressDialog.show(this, null, "正在扫描中");
-
         Thread thread = new Thread(runnable);
         thread.start();
     }
@@ -109,6 +103,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
                     MediaStore.Images.Media.DATE_MODIFIED);
             if (cursor == null) return;
             FolderBean allBean = new FolderBean();
+            allBean.folderName = "全部图片";
             folderList.add(allBean);
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -118,7 +113,6 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
                 allBean.files.add(path);
             }
             cursor.close();
-            allBean.setId(-1);
             List<String> allList = allBean.files;
             //本地没有图片
             if (allList.size() <= 0) {
@@ -126,17 +120,19 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
                 return;
             }
             //第一张照片设置为封面
-            allBean.firstImagePath = allList.get(0);
+            allBean.coverImagePath = allList.get(0);
             //分组逻辑
             Map<String, FolderBean> group = new HashMap<>();
             for (String s : allList) {
                 File file = new File(s);
                 File parent = file.getParentFile();
                 if (!parent.exists()) continue;
-                if (!group.containsKey(parent.toString())) {
+                String sParent = parent.toString();
+                if (!group.containsKey(sParent)) {
                     FolderBean bean = new FolderBean();
-                    bean.firstImagePath = file.toString();
-                    bean.setDir(parent.toString());
+                    bean.coverImagePath = file.toString();
+                    int lastIndexOf = sParent.lastIndexOf("/");
+                    bean.folderName = sParent.substring(lastIndexOf > 0 ? lastIndexOf : 0);
                     bean.files.add(s);
                     group.put(parent.toString(), bean);
                     folderList.add(bean);
@@ -174,9 +170,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
             adapter.setData(bean.files);
             adapter.notifyDataSetChanged();
         }
-        tvDirName.setText(bean.id < 0 ? "所有图片" : bean.files.size() + "");
+        tvDirName.setText(bean.folderName);
         tvDirCount.setText(bean.files.size() + "");
-
     }
 
     @Override
@@ -189,6 +184,4 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
         super.onDestroy();
         ImageLoader.get().release();
     }
-
-
 }

@@ -1,7 +1,6 @@
 package com.kanzhun.manager.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,9 +70,7 @@ public class ImagesAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         String path = getItem(position);
-        if (!TextUtils.isEmpty(path)) {
-            ImageLoader.get().loadImage(path, holder.ivImage);
-        }
+        ImageLoader.get().displayImage(path, holder.ivImage);
         return convertView;
     }
 

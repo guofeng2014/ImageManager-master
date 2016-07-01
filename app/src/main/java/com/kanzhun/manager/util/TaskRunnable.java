@@ -8,7 +8,8 @@ import com.kanzhun.manager.bean.ImageSizeInfo;
 import com.kanzhun.manager.itfs.OnImageLoadCompleteListener;
 
 /**
- * Created by zhouyou on 2016/6/24.
+ * 作者：guofeng
+ * ＊ 日期:16/7/1
  */
 public class TaskRunnable implements Runnable {
     /**
@@ -23,7 +24,6 @@ public class TaskRunnable implements Runnable {
      * 异步回调接口
      */
     private OnImageLoadCompleteListener listener;
-
     /**
      * 图片质量
      */
@@ -39,29 +39,22 @@ public class TaskRunnable implements Runnable {
         this.config = config;
     }
 
-    public String getUrl() {
-
-        return imageInfo.path;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof TaskRunnable && ((TaskRunnable) o).getUrl().equals(getUrl())) {
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public void run() {
+        if (imageInfo == null) return;
+        if (imageConfig == null) return;
+        if (config == null) return;
+        //判断图片是否可加载
+        String tag = (String) imageInfo.imageView.getTag();
+        String path = imageInfo.path;
+        if (!tag.equals(path)) return;
         // 获得图片需要显示的大小
         ImageSizeInfo imageSizeInfo = ImageUtils.getImageViewSize(imageInfo.imageView);
         //加载本地bitmap
         Bitmap b = ImageUtils.decodeSampledBitmapFromPath(config, imageInfo.path, imageSizeInfo.width, imageSizeInfo.height);
         //设置打包数据bitmap
         imageInfo.bitmap = b;
-        //释放信号量
-        imageConfig.getSemaphore().release();
         //回调主UI刷新
         if (listener != null) listener.onImageRefresh(imageInfo);
         //保存缓存
