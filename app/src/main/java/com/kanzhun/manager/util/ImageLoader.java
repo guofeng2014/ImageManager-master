@@ -123,6 +123,7 @@ public class ImageLoader implements OnImageLoadCompleteListener {
      * 释放内存
      */
     public void release() {
+        tagMap.clear();
         config.getmLruCache().clear();
         System.gc();
     }
