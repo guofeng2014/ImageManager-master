@@ -13,7 +13,14 @@ import java.util.Map;
 /**
  * 作者：guofeng
  * ＊ 日期:16/7/1
+ *
+ * ARGB_4444:405600
+ * ARGB_8888:811200
+ * RGB_565:405600
+ * ALPHA_8:811200
+ *
  */
+
 public class TaskRunnable implements Runnable {
     /**
      * 打包数据
@@ -63,11 +70,16 @@ public class TaskRunnable implements Runnable {
         Bitmap b = ImageUtils.decodeSampledBitmapFromPath(config, imageInfo.path, imageSizeInfo.width, imageSizeInfo.height);
         //设置打包数据bitmap
         imageInfo.bitmap = b;
+
+        if (b != null) {
+            //保存缓存
+            imageConfig.getmLruCache().add(imageInfo.path, b);
+            //设置加载动画
+            imageInfo.hasAnimation = true;
+        }
+
         //回调主UI刷新
         if (listener != null) listener.onImageRefresh(imageInfo);
-        //保存缓存
-        if (b != null) {
-            imageConfig.getmLruCache().add(imageInfo.path, b);
-        }
     }
+
 }

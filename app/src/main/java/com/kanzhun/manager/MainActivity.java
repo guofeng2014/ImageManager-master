@@ -21,10 +21,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         ImageConfig config = new ImageConfig.Builder()
-                .setDefaultResourceId(R.mipmap.ic_launcher)
-                .setErrorResourceId(R.mipmap.ic_launcher)
+                .setDefaultResourceId(R.mipmap.bg_default)
+                .setErrorResourceId(R.mipmap.bg_default)
                 .setThreadCount(3)
-                .setImageConfig(Bitmap.Config.RGB_565)
+                .setImageConfig(Bitmap.Config.ARGB_8888)
                 .build();
         ImageLoader.get().init(config);
 

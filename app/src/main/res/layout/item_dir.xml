@@ -5,14 +5,14 @@
     android:orientation="vertical">
 
     <ImageView
+        android:layout_margin="10dip"
         android:id="@+id/iv_dir"
         android:layout_width="60dip"
         android:layout_height="60dip"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:padding="15dip"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher" />
+       />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,7 +26,6 @@
             android:id="@+id/tv_dir_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="所有图片"
             android:textColor="#333"
             android:textSize="12dip" />
 
@@ -34,7 +33,6 @@
             android:id="@+id/tv_dir_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="所有图片"
             android:textColor="#333"
             android:textSize="12dip" />
 

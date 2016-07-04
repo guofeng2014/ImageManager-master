@@ -102,46 +102,54 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
                     new String[]{"image/jpeg", "image/png", "image/jpg"},
                     MediaStore.Images.Media.DATE_MODIFIED);
             if (cursor == null) return;
-            FolderBean allBean = new FolderBean();
-            allBean.folderName = "全部图片";
-            folderList.add(allBean);
+            List<String> totalImage = new ArrayList<>();
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
                 File parentFile = new File(path).getParentFile();
                 if (parentFile == null || !parentFile.exists()) continue;
                 // 添加全部图片
-                allBean.files.add(path);
+                totalImage.add(path);
             }
             cursor.close();
-            List<String> allList = allBean.files;
             //本地没有图片
-            if (allList.size() <= 0) {
+            if (totalImage.size() <= 0) {
                 handler.sendEmptyMessage(LOAD_EMPTY);
                 return;
             }
-            //第一张照片设置为封面
-            allBean.coverImagePath = allList.get(0);
+
+            //所有图片
+            FolderBean allBean = new FolderBean();
+            List<String> allList = allBean.files;
+            folderList.add(allBean);
+            allBean.folderName = "所有图片";
+
             //分组逻辑
             Map<String, FolderBean> group = new HashMap<>();
-            for (String s : allList) {
+            for (String s : totalImage) {
                 File file = new File(s);
                 File parent = file.getParentFile();
                 if (!parent.exists()) continue;
-                String sParent = parent.toString();
-                if (!group.containsKey(sParent)) {
+                String fonderName = parent.getName();
+                //全部图片
+                allList.add(s);
+                if (!group.containsKey(fonderName)) {
                     FolderBean bean = new FolderBean();
                     bean.coverImagePath = file.toString();
-                    int lastIndexOf = sParent.lastIndexOf("/");
-                    bean.folderName = sParent.substring(lastIndexOf > 0 ? lastIndexOf : 0);
+                    bean.folderName = fonderName;
                     bean.files.add(s);
-                    group.put(parent.toString(), bean);
+                    group.put(fonderName, bean);
                     folderList.add(bean);
                 } else {
-                    FolderBean bean = group.get(parent.toString());
+                    FolderBean bean = group.get(fonderName);
                     bean.files.add(s);
                 }
             }
-            handler.obtainMessage(LOAD_SUCCEED, allBean).sendToTarget();
+
+            int count = allList.size();
+            if (count > 0) {
+                allBean.coverImagePath = allList.get(0);
+                handler.obtainMessage(LOAD_SUCCEED, allBean).sendToTarget();
+            }
         }
     };
 

@@ -19,10 +19,15 @@ public class ImageInfo {
      * 加载图片的路径
      */
     public String path;
+    /**
+     * 是否有动画
+     */
+    public boolean hasAnimation;
 
-    public ImageInfo(Bitmap bitmap, ImageView imageView, String path) {
+    public ImageInfo(Bitmap bitmap, ImageView imageView, String path, boolean hasAnimation) {
         this.bitmap = bitmap;
         this.imageView = imageView;
         this.path = path;
+        this.hasAnimation = hasAnimation;
     }
 }

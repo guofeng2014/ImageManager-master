@@ -17,6 +17,8 @@ import java.util.Map;
  * Created by zhouyou on 2016/6/24.
  */
 public class ImageLoader implements OnImageLoadCompleteListener {
+
+
     /**
      * 用于存储ImageView和地址的对应关系
      */
@@ -60,8 +62,6 @@ public class ImageLoader implements OnImageLoadCompleteListener {
     public void displayImage(String path, ImageView imageView) {
         if (config == null) throw new NullPointerException("请初始化ImageConfig");
         if (imageView == null) throw new NullPointerException("imageView不可为空");
-        //加载默认图片
-        imageView.setImageResource(config.getDefaultResourceId());
         //地址为空,加载默认图片
         if (TextUtils.isEmpty(path)) return;
         // 设置tag
@@ -69,12 +69,14 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         //从缓存获取bitmap对象
         Bitmap b = config.getmLruCache().get(path);
         //打包数据
-        ImageInfo imageInfo = new ImageInfo(b, imageView, path);
+        ImageInfo imageInfo = new ImageInfo(b, imageView, path, false);
         //加载缓存bitmap
         if (b != null && !b.isRecycled()) {
             onImageRefresh(imageInfo);
             return;
         }
+        //加载默认图片
+        imageView.setImageResource(config.getDefaultResourceId());
         //创建任务
         TaskRunnable imageRunnable = new TaskRunnable(imageInfo, config, tagMap, config.getImageConfig());
         imageRunnable.setOnImageLoadCompleteListener(this);
@@ -93,14 +95,18 @@ public class ImageLoader implements OnImageLoadCompleteListener {
             ImageView iv = imageInfo.imageView;
             String tag = tagMap.get(iv);
             String path = imageInfo.path;
+            boolean hasAnimation = imageInfo.hasAnimation;
             if (TextUtils.equals(tag, path)) {
                 //文件加载失败
                 if (b == null) {
                     iv.setImageResource(config.getErrorResourceId());
+                    return true;
                 }
                 //文件正常
-                else {
-                    iv.setImageBitmap(b);
+                iv.setImageBitmap(b);
+                //显示加载动画
+                if (hasAnimation) {
+                    AnimationUtils.alphaAnimation(iv);
                 }
             }
             return true;
@@ -127,5 +133,6 @@ public class ImageLoader implements OnImageLoadCompleteListener {
         config.getmLruCache().clear();
         System.gc();
     }
+
 
 }
