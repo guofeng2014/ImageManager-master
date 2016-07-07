@@ -3,6 +3,7 @@ package com.kanzhun.manager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.GridView;
@@ -32,6 +35,7 @@ import java.util.Map;
  */
 public class GalleryActivity extends Activity implements View.OnClickListener, GallerySelectDialog.IOnDirectorySelectListener {
 
+
     private GridView gv;
     private TextView tvDirName;
     private TextView tvDirCount;
@@ -46,13 +50,19 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
      * 加载相册有数据
      */
     private final static int LOAD_SUCCEED = 1;
+    /**
+     * 请求权限
+     */
+    private static final int REQUEST_READ_EXTERNAL_PERMISSION = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         initViews();
-        initData();
+        if (hasWriteExternalPermission()) {
+            initData();
+        }
     }
 
     private void initViews() {
@@ -144,7 +154,6 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
                     bean.files.add(s);
                 }
             }
-
             int count = allList.size();
             if (count > 0) {
                 allBean.coverImagePath = allList.get(0);
@@ -191,5 +200,39 @@ public class GalleryActivity extends Activity implements View.OnClickListener, G
     protected void onDestroy() {
         super.onDestroy();
         ImageLoader.get().release();
+    }
+
+    /**
+     * permission callback
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_READ_EXTERNAL_PERMISSION) {
+            //permission allow
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initData();
+            }
+            //permission deny
+            else {
+                Toast.makeText(GalleryActivity.this, "获取相册失败", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * check permission
+     */
+    private boolean hasWriteExternalPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL_PERMISSION);
+            return false;
+        }
+        return true;
     }
 }
